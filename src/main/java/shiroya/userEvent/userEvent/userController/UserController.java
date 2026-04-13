@@ -23,10 +23,20 @@ public class UserController {
         return new ResponseEntity<>("Created", HttpStatus.CREATED);
     }
 
-    @GetMapping("/userName")
-    public UserEntity fetchUser(@PathVariable String userName){
+    @GetMapping("/{userName}")
+    public UserEntity fetchUser(@PathVariable String userName,
+                                @RequestHeader("Authorization") String authHeader){
 
+        System.out.println(authHeader);
         return userService.findUserByUsername(userName);
+    }
+
+    @GetMapping("userid/{userId}")
+    public UserEntity fetchUserWithUserId(@PathVariable String userId,
+                                @RequestHeader("Authorization") String authHeader){
+
+        System.out.println(authHeader);
+        return userService.fetchUserUserId(userId);
     }
 
 }

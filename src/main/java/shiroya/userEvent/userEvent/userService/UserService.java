@@ -58,4 +58,15 @@ public class UserService {
                    throw new UserNotCreatedException("Something is Wrong");
         }
     }
+
+    public UserEntity fetchUserUserId(String userId){
+
+        try
+        {
+            return userRepo.getByUserId(userId);
+        }
+        catch (RuntimeException e){
+            throw new UserNotCreatedException("Something is Wrong");
+        }
+    }
 }
