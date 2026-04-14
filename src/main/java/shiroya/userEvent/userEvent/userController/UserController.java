@@ -32,10 +32,8 @@ public class UserController {
     }
 
     @GetMapping("userid/{userId}")
-    public UserEntity fetchUserWithUserId(@PathVariable String userId,
-                                @RequestHeader("Authorization") String authHeader){
+    public UserEntity fetchUserWithUserId(@PathVariable String userId){
 
-        System.out.println(authHeader);
         return userService.fetchUserUserId(userId);
     }
 
