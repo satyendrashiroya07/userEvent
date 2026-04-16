@@ -37,3 +37,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+app:
+  public-endpoints:
+    - /auth/**
+    - /users
+    - /users/login
+    - /login

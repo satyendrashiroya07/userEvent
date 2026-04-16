@@ -3,7 +3,7 @@ package shiroya.userEvent.userEvent.producer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import productEvent.userEvent.UserEvent;
+import shiroya.userEvent.UserEvent;
 
 @Service
 @RequiredArgsConstructor
