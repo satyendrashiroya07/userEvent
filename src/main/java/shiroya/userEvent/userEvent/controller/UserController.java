@@ -42,14 +42,12 @@ public class UserController {
     @GetMapping("userid/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId == authentication.name")
     public UserEntity fetchUserWithUserId(@PathVariable String userId,
-                                          HttpServletRequest request,
-                                          @RequestHeader("X-Roles") String roles){
+                                            HttpServletRequest request){
 
-        String currentUser = (String) request.getAttribute("userId");
-        List<String> roles1 = (List<String>) request.getAttribute("roles");
-        System.out.println(currentUser);
-        System.out.println(roles1);
-        System.out.println(roles);
+//        String currentUser = (String) request.getAttribute("userId");
+//        List<String> roles1 = (List<String>) request.getAttribute("roles");
+//        System.out.println(currentUser);
+//        System.out.println(roles1);
         return userService.fetchUserUserId(userId);
     }
 

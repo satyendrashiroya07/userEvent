@@ -24,14 +24,6 @@ public class JwtUtil {
 
     private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public Claims extractClaims(String token) {
-            return Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        }
-
     public String generateToken(String userId) {
 
         UserEntity user = userRepo.getByUserId(userId);

@@ -15,5 +15,4 @@ public class userProducer {
     {
         kafkaTemplate.send("user-created", event.getUserName(), event);
     }
-
 }

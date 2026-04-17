@@ -52,8 +52,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
-        // 1. Skip if no token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -62,7 +60,6 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            // 2. Validate token
             Claims claims = Jwts.parser()
                     .setSigningKey(key)
                     .parseClaimsJws(token)
@@ -80,8 +77,6 @@ public class JwtFilter extends OncePerRequestFilter {
                             userId, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-
-            // 3. Attach to request (simple approach)
             request.setAttribute("userId", userId);
             request.setAttribute("roles", roles);
 
