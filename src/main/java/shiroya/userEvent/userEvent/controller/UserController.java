@@ -1,6 +1,5 @@
 package shiroya.userEvent.userEvent.controller;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping()
+    @PostMapping("/registration")
     public ResponseEntity<String> createUser(@RequestBody UserRequest user){
 
         userService.createUserService(user);
@@ -29,25 +28,17 @@ public class UserController {
     }
 
     @GetMapping("/{userName}")
-    public UserEntity fetchUser(@PathVariable String userName,
-                                @RequestHeader("Authorization") String authHeader,
-                                HttpServletRequest request,
-                                @RequestHeader("X-User-Id") String userId,
-                                @RequestHeader("X-Roles") String roles){
-        System.out.println(roles);
-        System.out.println(authHeader);
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserEntity> fetchUser(@PathVariable String userName,
+                                      HttpServletRequest request){
         return userService.findUserByUsername(userName);
     }
 
-    @GetMapping("userid/{userId}")
+    @GetMapping("id/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId == authentication.name")
     public UserEntity fetchUserWithUserId(@PathVariable String userId,
                                             HttpServletRequest request){
 
-//        String currentUser = (String) request.getAttribute("userId");
-//        List<String> roles1 = (List<String>) request.getAttribute("roles");
-//        System.out.println(currentUser);
-//        System.out.println(roles1);
         return userService.fetchUserUserId(userId);
     }
 

@@ -13,6 +13,7 @@ import shiroya.userEvent.userEvent.userEntity.UserEntity;
 import shiroya.userEvent.userEvent.userRepo.RoleRepo;
 import shiroya.userEvent.userEvent.userRepo.UserRepo;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,11 +71,12 @@ public class UserService {
 
     }
 
-    public UserEntity findUserByUsername(String userName){
+    public List<UserEntity> findUserByUsername(String userName){
 
                try
                {
-                   return userRepo.findByUserName(userName);
+                   List<UserEntity> users = userRepo.findByUserNameContainingIgnoreCase(userName);
+                   return users;
                }
                catch (RuntimeException e){
                    throw new UserNotCreatedException("Something is Wrong");
