@@ -1,12 +1,17 @@
 package shiroya.userEvent.userEvent.userService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import shiroya.userEvent.UserEvent;
 import shiroya.userEvent.userEvent.DTO.UserRequest;
 import shiroya.userEvent.userEvent.exception.DuplicateUserException;
 import shiroya.userEvent.userEvent.exception.UserNotCreatedException;
+import shiroya.userEvent.userEvent.pagination.PageResponse;
 import shiroya.userEvent.userEvent.producer.userProducer;
 import shiroya.userEvent.userEvent.userEntity.RoleEntity;
 import shiroya.userEvent.userEvent.userEntity.UserEntity;
@@ -92,5 +97,28 @@ public class UserService {
         catch (RuntimeException e){
             throw new UserNotCreatedException("Something is Wrong");
         }
+    }
+
+    public PageResponse<UserEntity> getUsers(int page, int size, String sortBy, String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<UserEntity> users = userRepo.findAll(pageable);
+
+        List<UserEntity> content = users.stream().collect(Collectors.toList());
+
+        PageResponse<UserEntity> response = new PageResponse<>();
+        response.setContent(content);
+        response.setPage(users.getNumber());
+        response.setSize(users.getSize());
+        response.setTotalElements(users.getTotalElements());
+        response.setTotalPages(users.getTotalPages());
+        response.setLast(users.isLast());
+
+        return response;
     }
 }
