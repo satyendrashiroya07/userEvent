@@ -1,10 +1,14 @@
 package shiroya.userEvent.userEvent.userService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import shiroya.userEvent.UserEvent;
@@ -15,6 +19,8 @@ import shiroya.userEvent.userEvent.pagination.PageResponse;
 import shiroya.userEvent.userEvent.producer.userProducer;
 import shiroya.userEvent.userEvent.userEntity.RoleEntity;
 import shiroya.userEvent.userEvent.userEntity.UserEntity;
+import shiroya.userEvent.userEvent.userEntity.OutBoxEventUser;
+import shiroya.userEvent.userEvent.userRepo.OutBoxEventUserRepo;
 import shiroya.userEvent.userEvent.userRepo.RoleRepo;
 import shiroya.userEvent.userEvent.userRepo.UserRepo;
 
@@ -23,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -31,6 +38,8 @@ public class UserService {
     private final UserRepo userRepo;
     private final userProducer producer;
     private final RoleRepo roleRepo;
+    private final OutBoxEventUserRepo outBoxEventUserRepo;
+    private final ObjectMapper objectMapper;
 
     public UserEntity createUserService(UserRequest request){
 
@@ -67,7 +76,14 @@ public class UserService {
                     userEmail(user.getUserEmail()).
                     build();
 
-            producer.sendOrderEvent(event);
+            OutBoxEventUser kafkaDbEvent = new OutBoxEventUser();
+            kafkaDbEvent.setAggregateType("USER");
+            kafkaDbEvent.setAggregateId(user.getId().toString());
+            kafkaDbEvent.setEventType("USER_CREATED");
+            kafkaDbEvent.setPayload(convertToJson(event));
+            kafkaDbEvent.setStatus("NEW");
+
+            outBoxEventUserRepo.save(kafkaDbEvent);
 
             return save;
         }else {
@@ -120,5 +136,37 @@ public class UserService {
         response.setLast(users.isLast());
 
         return response;
+    }
+
+
+    @Scheduled(fixedDelay = 5000)
+    public void publishOutboxEvents() {
+
+        List<OutBoxEventUser> events = outBoxEventUserRepo.findByStatus("NEW");
+
+        for (OutBoxEventUser event : events) {
+            try {
+
+                UserEvent userEvent =
+                        objectMapper.readValue(event.getPayload(), UserEvent.class);
+
+                producer.sendOrderEvent(userEvent);
+
+                event.setStatus("SENT");
+                outBoxEventUserRepo.save(event);
+
+            } catch (Exception e) {
+                log.error("Failed to publish event {}", event.getId(), e);
+            }
+        }
+    }
+
+
+    private String convertToJson(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting to JSON", e);
+        }
     }
 }
