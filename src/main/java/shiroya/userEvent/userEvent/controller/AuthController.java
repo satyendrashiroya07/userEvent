@@ -5,13 +5,13 @@ import shiroya.loggingRequest.LoginRequest;
 import shiroya.userEvent.userEvent.security.JwtUtil;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final JwtUtil jwtUtil;
 
-    @PostMapping()
+    @PostMapping("/login")
     public String login(@RequestBody LoginRequest request) {
         return jwtUtil.generateToken(request.getUserId());
     }
