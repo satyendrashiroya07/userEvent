@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import shiroya.userEvent.userEvent.DTO.UserRequest;
+import shiroya.userEvent.UserRequest;
 import shiroya.userEvent.userEvent.pagination.PageResponse;
 import shiroya.userEvent.userEvent.userEntity.UserEntity;
 import shiroya.userEvent.userEvent.userService.UserService;
