@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import shiroya.userEvent.UserEvent;
-import shiroya.userEvent.userEvent.DTO.UserRequest;
+import shiroya.userEvent.UserRequest;
 import shiroya.userEvent.userEvent.exception.DuplicateUserException;
 import shiroya.userEvent.userEvent.exception.UserNotCreatedException;
 import shiroya.userEvent.userEvent.pagination.PageResponse;
@@ -24,6 +24,7 @@ import shiroya.userEvent.userEvent.userRepo.OutBoxEventUserRepo;
 import shiroya.userEvent.userEvent.userRepo.RoleRepo;
 import shiroya.userEvent.userEvent.userRepo.UserRepo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -47,24 +48,37 @@ public class UserService {
 
         if(Objects.isNull(usr))
         {
-            String pass = request.getPassword();
-            request.setPassword(passwordEncoder.encode(pass));
-
             Set<RoleEntity> roles = request.getRoles().stream()
                     .map(roleName -> roleRepo.findByName(roleName)
                             .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
                     .collect(Collectors.toSet());
 
             UserEntity user = new UserEntity();
+
             user.setUserId(request.getUserId());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setUserName(request.getUserName());
+            user.setFirstName(request.getFirstName());
+            user.setLasttName(request.getLasttName());
+            user.setAdharnumber(request.getAdharnumber());
             user.setUserDob(request.getUserDob());
+            user.setGender(request.getGender());
             user.setUserAddress(request.getUserAddress());
             user.setUserMobileNumber(request.getUserMobileNumber());
             user.setUserEmail(request.getUserEmail());
+            user.setCountry(request.getCountry());
+            user.setState(request.getState());
             user.setPinCode(request.getPinCode());
+            user.setCreatedBy(request.getCreatedBy());
+            user.setCreatedDate(
+                    request.getCreatedDate() != null
+                            ? request.getCreatedDate()
+                            : LocalDateTime.now()
+            );
+            user.setUpdatedDate(LocalDateTime.now());
+
             user.setRoles(roles);
+
 
 
             UserEntity save = (UserEntity) userRepo.save(user);
