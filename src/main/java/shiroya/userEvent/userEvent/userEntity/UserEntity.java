@@ -1,10 +1,10 @@
 package shiroya.userEvent.userEvent.userEntity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -26,8 +26,20 @@ public class UserEntity {
     @Column(length = 100, nullable = false)
     private String userName;
 
+    @Column(length = 100, nullable = false)
+    private String firstName;
+
+    @Column(length = 100, nullable = false)
+    private String lasttName;
+
+    @Column(length = 16, nullable = false)
+    private String adharnumber;
+
     @Column(length = 20, nullable = false)
     private String userDob;
+
+    @Column(length = 3, nullable = false)
+    private String gender;
 
     @Column(length = 200, nullable = false)
     private String userAddress;
@@ -38,8 +50,23 @@ public class UserEntity {
     @Column(length = 50, nullable = false)
     private String userEmail;
 
+    @Column(length = 50, nullable = false)
+    private String country;
+
+    @Column(length = 50, nullable = false)
+    private String state;
+
     @Column(length = 10, nullable = false)
     private String pinCode;
+
+    @Column(length = 100, nullable = false)
+    private String createdBy;
+
+    @Column(nullable = false)
+    private LocalDateTime createdDate;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
