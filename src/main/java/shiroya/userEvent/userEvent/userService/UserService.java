@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import shiroya.userEvent.UserEvent;
 import shiroya.userEvent.UserRequest;
 import shiroya.userEvent.userEvent.exception.DuplicateUserException;
+import shiroya.userEvent.userEvent.exception.RoleNotFoundException;
 import shiroya.userEvent.userEvent.exception.UserNotCreatedException;
 import shiroya.userEvent.userEvent.pagination.PageResponse;
 import shiroya.userEvent.userEvent.producer.userProducer;
@@ -50,7 +51,7 @@ public class UserService {
         {
             Set<RoleEntity> roles = request.getRoles().stream()
                     .map(roleName -> roleRepo.findByName(roleName)
-                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+                            .orElseThrow(() -> new RoleNotFoundException("Role not found: " + roleName)))
                     .collect(Collectors.toSet());
 
             UserEntity user = new UserEntity();

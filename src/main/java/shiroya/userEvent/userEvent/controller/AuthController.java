@@ -13,7 +13,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestBody LoginRequest request) {
-        return jwtUtil.generateToken(request.getUserId());
+        return jwtUtil.generateToken1(request.getUserId());
     }
 }
 
