@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class GlobalExceptionable extends RuntimeException {
+public class GlobalExceptionable {
 
     @ExceptionHandler(UserNotCreatedException.class)
     public ResponseEntity<String> UserNotCreatedException(RuntimeException ex){
@@ -16,5 +16,11 @@ public class GlobalExceptionable extends RuntimeException {
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<String> duplicateUserException(RuntimeException ex){
         return new ResponseEntity<>("Duplicate User", HttpStatus.CONFLICT);
+    }
+
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<String> RoleNotFoundException(RuntimeException ex) {
+        return new ResponseEntity<>("Roles Not Found", HttpStatus.NOT_FOUND);
     }
 }

@@ -2,12 +2,14 @@ package shiroya.userEvent.userEvent.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,6 +19,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import shiroya.userEvent.userEvent.configuration.AppConfig;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.Key;
 import java.util.List;
@@ -34,6 +37,14 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final String SECRET = "mysecretkeymysecretkeymysecretkey";
 
     private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -61,7 +72,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         try {
             Claims claims = Jwts.parser()
-                    .setSigningKey(key)
+                    .setSigningKey(getSigningKey())
                     .parseClaimsJws(token)
                     .getBody();
 
