@@ -23,4 +23,9 @@ public class GlobalExceptionable {
     public ResponseEntity<String> RoleNotFoundException(RuntimeException ex) {
         return new ResponseEntity<>("Roles Not Found", HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(BadCredentialsUserOrPass.class)
+    public ResponseEntity<String> BadCredentialsUserOrPass(RuntimeException ex) {
+        return new ResponseEntity<>("Bad Credentials", HttpStatus.BAD_REQUEST);
+    }
 }
