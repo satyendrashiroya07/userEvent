@@ -53,10 +53,11 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateToken1(String userId) {
+    public String generateToken1(UserEntity user)
+    {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + 60 * 60 * 1000L);
-        UserEntity user = userRepo.getByUserId(userId);
+        String userId = user.getUserId();
 
         List<String> roles = user.getRoles().stream()
                 .map(RoleEntity::getName)
